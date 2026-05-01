@@ -1,0 +1,23 @@
+{
+    "schemaVersion": 1,
+  "id": "immediatelyfast",
+  "version": "1.15.2+26.1.2",
+  "name": "ImmediatelyFast",
+  "description": "Speed up and optimize immediate mode rendering in Minecraft",
+  "authors": [
+    "RK_01"
+  ],
+  "license": "LGPL-3.0",
+  "icon": "assets/immediatelyfast/icon.png",
+  "environment": "*",
+    "mixins": [
+        "${mod_id}.mixins.json",
+        "${mod_id}.fabric.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=${fabric_loader_version}",
+        "fabric-api": "*",
+        "minecraft": "~${minecraft_version}",
+        "java": ">=${java_version}"
+    }
+}

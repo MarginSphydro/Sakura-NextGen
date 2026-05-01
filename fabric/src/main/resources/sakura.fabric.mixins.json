@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "dev.sakura.client.mixins",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "MixinMinecraftFabric"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
+

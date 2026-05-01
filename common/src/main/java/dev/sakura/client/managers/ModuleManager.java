@@ -1,0 +1,213 @@
+package dev.sakura.client.managers;
+
+import com.mojang.blaze3d.platform.InputConstants;
+import dev.sakura.client.assets.i18n.SakuraTranslateComponent;
+import dev.sakura.client.events.bus.EventBus;
+import dev.sakura.client.events.bus.EventHandler;
+import dev.sakura.client.events.impl.KeyPressEvent;
+import dev.sakura.client.events.impl.MousePressEvent;
+import dev.sakura.client.gui.hudeditor.HudEditorScreen;
+import dev.sakura.client.gui.panel.PanelScreen;
+import dev.sakura.client.managers.sound.SoundKey;
+import dev.sakura.client.managers.sound.SoundManager;
+import dev.sakura.client.modules.HudModule;
+import dev.sakura.client.modules.Module;
+import dev.sakura.client.modules.impl.ClientSetting;
+import dev.sakura.client.modules.impl.combat.*;
+import dev.sakura.client.modules.impl.hud.InventoryHud;
+import dev.sakura.client.modules.impl.hud.ModuleListHud;
+import dev.sakura.client.modules.impl.hud.PotionHud;
+import dev.sakura.client.modules.impl.hud.WatermarkHud;
+import dev.sakura.client.modules.impl.hud.notification.NotificationsHud;
+import dev.sakura.client.modules.impl.player.*;
+import dev.sakura.client.modules.impl.render.*;
+import dev.sakura.client.utils.client.ClientUtils;
+import dev.sakura.client.utils.client.KeybindUtils;
+import dev.sakura.client.utils.player.ChatUtils;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import org.lwjgl.glfw.GLFW;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ModuleManager {
+
+    public static final ModuleManager INSTANCE = new ModuleManager();
+
+    private List<Module> modules;
+
+    private ModuleManager() {
+        EventBus.INSTANCE.subscribe(this);
+    }
+
+    public void initModules() {
+        modules = new ArrayList<>(List.of(
+
+                ClientSetting.INSTANCE,
+
+                // Combat
+                AntiBot.INSTANCE,
+                AutoClicker.INSTANCE,
+                AutoDtap.INSTANCE,
+                AutoHitCrystal.INSTANCE,
+                AutoMend.INSTANCE,
+                AutoTotem.INSTANCE,
+                CrystalAura.INSTANCE,
+                CrystalBlocker.INSTANCE,
+                HoverTotem.INSTANCE,
+                KillAura.INSTANCE,
+                KeyPearl.INSTANCE,
+                MaceAura.INSTANCE,
+                PacketMine.INSTANCE,
+                SafeAnchor.INSTANCE,
+                SafeCrystal.INSTANCE,
+                SpearKill.INSTANCE,
+                Surround.INSTANCE,
+                TriggerBot.INSTANCE,
+                Velocity.INSTANCE,
+                AspectRatio.INSTANCE,
+
+                // Player
+                AutoFirework.INSTANCE,
+                AutoKouZi.INSTANCE,
+                AutoSprint.INSTANCE,
+                AutoTool.INSTANCE,
+                BreakCooldown.INSTANCE,
+                Disabler.INSTANCE,
+                ElytraFly.INSTANCE,
+                ElytraSwap.INSTANCE,
+                FakePlayer.INSTANCE,
+                FastWeb.INSTANCE,
+                InvManager.INSTANCE,
+                JumpCooldown.INSTANCE,
+                MovementFix.INSTANCE,
+                MultiTask.INSTANCE,
+                NoFall.INSTANCE,
+                NoRotate.INSTANCE,
+                NoSlow.INSTANCE,
+                Phase.INSTANCE,
+                PacketEat.INSTANCE,
+                SafeWalk.INSTANCE,
+                Scaffold.INSTANCE,
+                Stealer.INSTANCE,
+                Stuck.INSTANCE,
+                UseCooldown.INSTANCE,
+                VClip.INSTANCE,
+                Blink.INSTANCE,
+
+                // Render
+                CameraClip.INSTANCE,
+                ESP.INSTANCE,
+                Fullbright.INSTANCE,
+                HandsView.INSTANCE,
+                Hat.INSTANCE,
+                NameTags.INSTANCE,
+                NoRender.INSTANCE,
+                PopChams.INSTANCE,
+
+                // Hud
+                NotificationsHud.INSTANCE,
+                InventoryHud.INSTANCE,
+                ModuleListHud.INSTANCE,
+                PotionHud.INSTANCE,
+                WatermarkHud.INSTANCE
+
+        ));
+
+        // Initialize i18n for all modules
+        for (Module module : modules) {
+            module.initI18n(SakuraTranslateComponent.create("modules", module.getName().toLowerCase()));
+        }
+    }
+
+    public List<Module> getModules() {
+        return modules;
+    }
+
+    public void flushHuds(GuiGraphicsExtractor graphics) {
+        Minecraft mc = Minecraft.getInstance();
+        if (ClientUtils.isLoading() || mc.level == null || mc.screen instanceof HudEditorScreen) return;
+
+        for (Module m : modules) {
+            if (m instanceof HudModule module && module.isEnabled()) {
+                DeltaTracker delta = mc.getDeltaTracker();
+                module.updateLayout();
+                module.render(graphics, delta);
+            }
+        }
+    }
+
+    @EventHandler
+    private void onKeyPress(KeyPressEvent event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level == null || mc.screen != null || event.getKey() == GLFW.GLFW_KEY_UNKNOWN) return;
+
+        int keyCode = event.getKey();
+        int action = event.getAction();
+
+        if (keyCode == ClientSetting.INSTANCE.guiKeybind.getValue() && action == InputConstants.PRESS) {
+            mc.setScreen(PanelScreen.INSTANCE);
+        }
+
+        dispatchKeyBind(keyCode, action);
+    }
+
+    @EventHandler
+    private void onMousePress(MousePressEvent event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level == null || mc.screen != null) return;
+        dispatchKeyBind(KeybindUtils.encodeMouseButton(event.getButton()), event.getAction());
+    }
+
+    private void dispatchKeyBind(int keyCode, int action) {
+        boolean isPress = action == InputConstants.PRESS;
+        boolean isRelease = action == InputConstants.RELEASE;
+
+        List<Module> affectedModules = new ArrayList<>();
+        boolean hasEnabling = false;
+
+        for (Module module : modules) {
+            if (module.getKeyBind() != keyCode) continue;
+
+            if (module.getBindMode() == Module.BindMode.Toggle && isPress) {
+                if (!module.isEnabled()) {
+                    hasEnabling = true;
+                }
+                affectedModules.add(module);
+            } else if (module.getBindMode() == Module.BindMode.Hold) {
+                if (isPress && !module.isEnabled()) {
+                    hasEnabling = true;
+                    affectedModules.add(module);
+                } else if (isRelease && module.isEnabled()) {
+                    affectedModules.add(module);
+                }
+            }
+        }
+
+        for (Module module : affectedModules) {
+            if (module.getBindMode() == Module.BindMode.Toggle) {
+                module.toggle();
+            } else if (module.getBindMode() == Module.BindMode.Hold) {
+                if (isPress && !module.isEnabled()) {
+                    module.setEnabled(true);
+                } else if (isRelease && module.isEnabled()) {
+                    module.setEnabled(false);
+                }
+            }
+            if (ClientSetting.INSTANCE.shouldChatNotify()) {
+                ChatUtils.addChatMessage(module.getTranslatedName() + " is now " + (module.isEnabled() ? "enabled" : "disabled"));
+            }
+        }
+
+        if (!affectedModules.isEmpty() && ClientSetting.INSTANCE.shouldSoundNotify()) {
+            if (hasEnabling) {
+                SoundManager.INSTANCE.playInUi(SoundKey.ENABLE);
+            } else {
+                SoundManager.INSTANCE.playInUi(SoundKey.DISABLE);
+            }
+        }
+    }
+
+}
