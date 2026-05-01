@@ -1,11 +1,16 @@
 package dev.sakura.client.gui.panel.panel.clientsettings;
 
 import dev.sakura.client.assets.holders.TranslateHolder;
+import dev.sakura.client.graphics.renderers.RectRenderer;
+import dev.sakura.client.graphics.renderers.RoundRectRenderer;
+import dev.sakura.client.graphics.renderers.TextRenderer;
 import dev.sakura.client.gui.panel.MD3Theme;
 import dev.sakura.client.gui.panel.PanelLayout;
 import dev.sakura.client.gui.panel.PanelState;
 import dev.sakura.client.gui.panel.adapter.SettingListController;
 import dev.sakura.client.gui.panel.component.setting.KeybindSettingRow;
+import dev.sakura.client.gui.panel.dsl.PanelUiCompiler;
+import dev.sakura.client.gui.panel.dsl.PanelUiTree;
 import dev.sakura.client.gui.panel.popup.PanelPopupHost;
 import dev.sakura.client.gui.panel.utils.PanelContentBuffer;
 import dev.sakura.client.gui.panel.utils.PanelContentInvalidationState;
@@ -14,7 +19,6 @@ import dev.sakura.client.gui.panel.utils.ScrollBarUtils;
 import dev.sakura.client.modules.impl.ClientSetting;
 import dev.sakura.client.settings.Setting;
 import dev.sakura.client.settings.impl.KeybindSetting;
-import dev.sakura.client.utils.client.KeybindUtils;
 import dev.sakura.client.utils.render.animation.Animation;
 import dev.sakura.client.utils.render.animation.Easing;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -30,6 +34,9 @@ import java.util.Objects;
 public class GeneralClientSettingTab implements ClientSettingTabView {
 
     private final PanelState state;
+    private final RoundRectRenderer roundRectRenderer;
+    private final RectRenderer rectRenderer;
+    private final TextRenderer textRenderer;
     private final SettingListController settingListController;
     private final PanelContentBuffer contentBuffer = new PanelContentBuffer();
     private final PanelContentInvalidationState contentState = new PanelContentInvalidationState();
@@ -37,21 +44,22 @@ public class GeneralClientSettingTab implements ClientSettingTabView {
     private final ScrollBarDragState scrollBarDrag = new ScrollBarDragState();
 
     private PanelLayout.Rect bounds;
-    private int guiHeight;
     private float lastScroll = Float.NaN;
     private List<String> lastVisibleSettings = List.of();
     private String lastListeningKey = "";
     private long lastContentSignature = Long.MIN_VALUE;
 
-    public GeneralClientSettingTab(PanelState state, PanelPopupHost popupHost) {
+    public GeneralClientSettingTab(PanelState state, RoundRectRenderer roundRectRenderer, RectRenderer rectRenderer, TextRenderer textRenderer, PanelPopupHost popupHost) {
         this.state = state;
+        this.roundRectRenderer = roundRectRenderer;
+        this.rectRenderer = rectRenderer;
+        this.textRenderer = textRenderer;
         this.settingListController = new SettingListController(popupHost);
     }
 
     @Override
     public void render(GuiGraphicsExtractor guiGraphics, PanelLayout.Rect bounds, int mouseX, int mouseY, float partialTick) {
         this.bounds = bounds;
-        this.guiHeight = guiGraphics.guiHeight();
 
         List<Setting<?>> settings = ClientSetting.INSTANCE.getSettings().stream()
                 .filter(Setting::isAvailable)
@@ -62,29 +70,41 @@ public class GeneralClientSettingTab implements ClientSettingTabView {
         boolean hasScrollBar = maxScroll > 0.0f;
         float rowWidth = hasScrollBar ? bounds.width() - ScrollBarUtils.TOTAL_WIDTH : bounds.width();
         long contentSignature = buildContentSignature(settings);
+        boolean popupConsumesHover = settingListController.isPopupHovered(mouseX, mouseY);
+        int effectiveMouseX = popupConsumesHover ? Integer.MIN_VALUE : mouseX;
+        int effectiveMouseY = popupConsumesHover ? Integer.MIN_VALUE : mouseY;
+        boolean rebuildContent = shouldRebuildContent(bounds, mouseX, mouseY, settings, guiGraphics.guiHeight(), contentSignature);
 
-        if (shouldRebuildContent(bounds, mouseX, mouseY, settings, guiGraphics.guiHeight(), contentSignature)) {
+        if (rebuildContent) {
             contentBuffer.clear();
             contentState.beginRebuild();
-
-            settingListController.layoutRows(settings, bounds, state.getClientSettingScroll(), rowWidth, (setting, row, rowBounds) -> {
-                if (row instanceof KeybindSettingRow keybindRow) {
-                    keybindRow.setListening(state.getListeningKeybindSetting() == keybindRow.getSetting());
-                }
-                Animation hoverAnimation = hoverAnimations.computeIfAbsent(setting, ignored -> {
-                    Animation animation = new Animation(Easing.EASE_OUT_CUBIC, 120L);
-                    animation.setStartValue(0.0f);
-                    return animation;
-                });
-                hoverAnimation.run(rowBounds.contains(mouseX, mouseY) ? 1.0f : 0.0f);
-                row.render(guiGraphics, contentBuffer.roundRectRenderer(), contentBuffer.rectRenderer(), contentBuffer.textRenderer(), rowBounds, hoverAnimation.getValue(), mouseX, mouseY, partialTick);
-                contentState.noteAnimation(!hoverAnimation.isFinished() || row.hasActiveAnimation());
-            });
-
-            rememberSnapshot(bounds, mouseX, mouseY, settings, guiGraphics.guiHeight(), contentSignature);
         }
 
-        contentBuffer.queueViewport(bounds, guiHeight, state.getClientSettingScroll(), maxScroll, contentHeight);
+        PanelUiTree tree = PanelUiTree.build(scope -> scope.viewport(contentBuffer, bounds, guiGraphics.guiHeight(),
+                state.getClientSettingScroll(), maxScroll, contentHeight, content -> {
+                    if (!rebuildContent) {
+                        return;
+                    }
+                    settingListController.prepareLayout(settings);
+                    settingListController.appendRows(settings, bounds, state.getClientSettingScroll(), rowWidth, (setting, row, rowBounds) -> {
+                        if (row instanceof KeybindSettingRow keybindRow) {
+                            keybindRow.setListening(state.getListeningKeybindSetting() == keybindRow.getSetting());
+                        }
+                        Animation hoverAnimation = hoverAnimations.computeIfAbsent(setting, ignored -> {
+                            Animation animation = new Animation(Easing.EASE_OUT_CUBIC, 120L);
+                            animation.setStartValue(0.0f);
+                            return animation;
+                        });
+                        hoverAnimation.run(rowBounds.contains(effectiveMouseX, effectiveMouseY) ? 1.0f : 0.0f);
+                        row.buildUi(content, guiGraphics, textRenderer, rowBounds, hoverAnimation.getValue(), effectiveMouseX, effectiveMouseY, partialTick);
+                        contentState.noteAnimation(!hoverAnimation.isFinished() || row.hasActiveAnimation());
+                    });
+                }));
+        PanelUiCompiler.render(tree, roundRectRenderer, rectRenderer, textRenderer);
+
+        if (rebuildContent) {
+            rememberSnapshot(bounds, mouseX, mouseY, settings, guiGraphics.guiHeight(), contentSignature);
+        }
     }
 
     @Override
@@ -104,20 +124,13 @@ public class GeneralClientSettingTab implements ClientSettingTabView {
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
-        if (bounds == null) {
+        if (bounds == null || event.button() != 0) {
             return false;
         }
 
-        KeybindSetting listeningKeybindSetting = state.getListeningKeybindSetting();
-        if (listeningKeybindSetting != null) {
-            listeningKeybindSetting.setValue(KeybindUtils.encodeMouseButton(event.button()));
+        if (state.getListeningKeybindSetting() != null) {
             state.setListeningKeybindSetting(null);
             markDirty();
-            return true;
-        }
-
-        if (event.button() != 0) {
-            return false;
         }
 
         float maxScroll = state.getMaxClientSettingScroll();
@@ -271,5 +284,6 @@ public class GeneralClientSettingTab implements ClientSettingTabView {
         }
         return signature;
     }
+
 }
 

@@ -122,7 +122,7 @@ public class ModuleRow {
         }
 
         scope.text(module.displayName(), PanelElements.rowLabelX(bounds), titleY, titleScale, titleColor, StaticFontLoader.DUCKSANS);
-        scope.text(module.description(), PanelElements.rowLabelX(bounds), subY, subScale, subColor);
+        scope.text(module.module().getAddonId() != null ? module.module().getAddonId() : "unknown", PanelElements.rowLabelX(bounds), subY, subScale, subColor);
         scope.toggle(toggleBounds, toggleProgress, toggleHoverProgress);
 
         if (keyWidth <= KEYBIND_CLIP_WIDTH + 0.5f) {

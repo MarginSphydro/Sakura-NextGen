@@ -2,6 +2,7 @@ package dev.sakura.client.managers;
 
 import com.google.gson.*;
 import dev.sakura.client.SakuraClient;
+import dev.sakura.client.addon.SakuraAddon;
 import dev.sakura.client.assets.config.LegacyConfigMigrator;
 import dev.sakura.client.modules.HudModule;
 import dev.sakura.client.modules.Module;
@@ -30,6 +31,7 @@ public class ConfigManager {
     private static final String IMPORTS_FOLDER = "imports";
     private static final String EXPORTS_FOLDER = "exports";
     private static final String FRIENDS_FILE_NAME = "friends.json";
+    private static final String ADDON_SETTINGS_FILE_NAME = "addon-settings.json";
     private static final String ACTIVE_CONFIG_FILE_NAME = "active-config.txt";
     private static final String EXPORT_METADATA_FILE_NAME = "config-info.json";
     private static final Pattern INVALID_CONFIG_NAME_PATTERN = Pattern.compile("[\\\\/:*?\"<>|\\p{Cntrl}]");
@@ -43,10 +45,7 @@ public class ConfigManager {
 
     public static final ConfigManager INSTANCE = new ConfigManager();
 
-    private final Gson gson = new GsonBuilder()
-            .setPrettyPrinting()
-            .disableHtmlEscaping()
-            .create();
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     private String activeConfigName = DEFAULT_CONFIG_NAME;
 
@@ -258,7 +257,8 @@ public class ConfigManager {
     }
 
     private Path getModuleFile(Path configStorageDir, Module module) {
-        return configStorageDir.resolve(module.getName() + ".json");
+        String addonId = module.getAddonId() != null ? module.getAddonId() : "unknown";
+        return configStorageDir.resolve(addonId).resolve(module.getName() + ".json");
     }
 
     private void applyModuleFromDisk(Module module, Path configStorageDir) {
@@ -358,6 +358,74 @@ public class ConfigManager {
 
         JsonObject settingsObj = new JsonObject();
         for (Setting<?> setting : module.getSettings()) {
+            if (setting == null) continue;
+            JsonElement value = serializeSetting(setting);
+            if (value != null) settingsObj.add(setting.getName(), value);
+        }
+        obj.add("settings", settingsObj);
+
+        return obj;
+    }
+
+    private Path getAddonSettingsFile(Path configStorageDir, SakuraAddon addon) {
+        return configStorageDir.resolve(addon.getAddonId()).resolve(ADDON_SETTINGS_FILE_NAME);
+    }
+
+    private void applyAddonFromDisk(SakuraAddon addon, Path configStorageDir) {
+        if (addon == null || addon.getSettings().isEmpty()) {
+            return;
+        }
+
+        Path file = getAddonSettingsFile(configStorageDir, addon);
+        if (!Files.exists(file)) {
+            return;
+        }
+
+        try {
+            String json = Files.readString(file, StandardCharsets.UTF_8);
+            JsonElement parsed = JsonParser.parseString(json);
+            if (parsed == null || !parsed.isJsonObject()) {
+                return;
+            }
+
+            JsonObject settingsObj = getObject(parsed.getAsJsonObject(), "settings");
+            if (settingsObj == null) {
+                return;
+            }
+
+            for (Setting<?> setting : addon.getSettings()) {
+                applySetting(setting, settingsObj.get(setting.getName()));
+            }
+        } catch (Exception e) {
+            SakuraClient.LOGGER.error("读取 addon 配置失败: {}", file, e);
+        }
+    }
+
+    private void saveAddonToDisk(SakuraAddon addon, Path configStorageDir) throws IOException {
+        if (addon == null || addon.getSettings().isEmpty()) {
+            return;
+        }
+
+        Path file = getAddonSettingsFile(configStorageDir, addon);
+        try {
+            Files.createDirectories(file.getParent());
+            String json = gson.toJson(buildAddonObject(addon));
+            Files.writeString(file, json, StandardCharsets.UTF_8,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING,
+                    StandardOpenOption.WRITE);
+        } catch (IOException e) {
+            SakuraClient.LOGGER.error("写入 addon 配置失败: {}", file, e);
+            throw e;
+        }
+    }
+
+    private JsonObject buildAddonObject(SakuraAddon addon) {
+        JsonObject obj = new JsonObject();
+        obj.addProperty("version", CONFIG_VERSION);
+
+        JsonObject settingsObj = new JsonObject();
+        for (Setting<?> setting : addon.getSettings()) {
             if (setting == null) continue;
             JsonElement value = serializeSetting(setting);
             if (value != null) settingsObj.add(setting.getName(), value);
@@ -498,13 +566,49 @@ public class ConfigManager {
         }
     }
 
+    private void resetAddonsToDefaults(List<SakuraAddon> addons) {
+        if (addons == null) {
+            return;
+        }
+        for (SakuraAddon addon : addons) {
+            if (addon != null) {
+                addon.resetSettings();
+            }
+        }
+    }
+
+    private void applyToAddons(List<SakuraAddon> addons) {
+        if (addons == null) {
+            return;
+        }
+        for (SakuraAddon addon : addons) {
+            if (addon != null) {
+                applyAddonFromDisk(addon, getActiveConfigStorageDir());
+            }
+        }
+    }
+
+    private void saveAddonsToDisk(List<SakuraAddon> addons, Path configStorageDir) throws IOException {
+        if (addons == null) {
+            return;
+        }
+        for (SakuraAddon addon : addons) {
+            if (addon != null) {
+                saveAddonToDisk(addon, configStorageDir);
+            }
+        }
+    }
+
     private void loadActiveConfigSnapshot() throws IOException {
         ensureRootDirectories();
         ensureConfigExists(activeConfigName);
         writeActiveConfigName(activeConfigName);
         List<Module> modules = ModuleManager.INSTANCE.getModules();
+        List<SakuraAddon> addons = AddonManager.INSTANCE.getAddons();
         resetModulesToDefaults(modules);
+        resetAddonsToDefaults(addons);
         applyToModules(modules);
+        applyToAddons(addons);
         loadFriends(getActiveConfigStorageDir());
     }
 
@@ -512,15 +616,17 @@ public class ConfigManager {
         ensureRootDirectories();
         ensureConfigExists(activeConfigName);
         writeActiveConfigName(activeConfigName);
+        Path configStorageDir = getActiveConfigStorageDir();
         List<Module> modules = ModuleManager.INSTANCE.getModules();
         if (modules != null) {
             for (Module module : modules) {
                 if (module != null) {
-                    saveModuleToDisk(module, getActiveConfigStorageDir());
+                    saveModuleToDisk(module, configStorageDir);
                 }
             }
         }
-        saveFriends(getActiveConfigStorageDir());
+        saveAddonsToDisk(AddonManager.INSTANCE.getAddons(), configStorageDir);
+        saveFriends(configStorageDir);
     }
 
     private void migrateLegacyLayoutsIfNeeded(List<Module> modules) throws IOException {

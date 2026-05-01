@@ -2,6 +2,7 @@ package dev.sakura.client.managers;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.sakura.client.assets.i18n.SakuraTranslateComponent;
+import dev.sakura.client.assets.i18n.TranslateComponent;
 import dev.sakura.client.events.bus.EventBus;
 import dev.sakura.client.events.bus.EventHandler;
 import dev.sakura.client.events.impl.KeyPressEvent;
@@ -116,10 +117,17 @@ public class ModuleManager {
 
         ));
 
-        // Initialize i18n for all modules
+        // Initialize i18n for all sakura modules
         for (Module module : modules) {
+            module.setAddonId("sakura");
             module.initI18n(SakuraTranslateComponent.create("modules", module.getName().toLowerCase()));
         }
+    }
+
+    public void registerAddonModule(String addonId, Module module, TranslateComponent moduleComponent) {
+        module.setAddonId(addonId);
+        module.initI18n(moduleComponent);
+        modules.add(module);
     }
 
     public List<Module> getModules() {

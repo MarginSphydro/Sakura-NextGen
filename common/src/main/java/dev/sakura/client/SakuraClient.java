@@ -2,6 +2,7 @@ package dev.sakura.client;
 
 import dev.sakura.client.assets.i18n.I18NFileGenerator;
 import dev.sakura.client.events.bus.EventBus;
+import dev.sakura.client.managers.AddonManager;
 import dev.sakura.client.managers.ConfigManager;
 import dev.sakura.client.managers.ModuleManager;
 import org.apache.logging.log4j.LogManager;
@@ -26,6 +27,7 @@ public class SakuraClient {
 
         // 初始化 Managers
         ModuleManager.INSTANCE.initModules();
+        AddonManager.INSTANCE.setupAddons();
         ConfigManager.INSTANCE.initConfig();
 
         // 生成空的 i18n 文件
