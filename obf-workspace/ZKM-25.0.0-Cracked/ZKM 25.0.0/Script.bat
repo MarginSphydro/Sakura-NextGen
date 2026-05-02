@@ -1,1 +1,1 @@
-java -jar ZKM.jar script.txt
+java -jar ZKM.jar fscript.txt
