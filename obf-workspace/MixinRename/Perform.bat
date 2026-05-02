@@ -1,0 +1,1 @@
+MixinRename.py --jar "..\ZKM-25.0.0-Cracked\ZKM 25.0.0\Lunify-1S.jar" --pkg dev.MarginSphydro.asm --out Lunify-S2.jar --configs fabric.mod.json Lunify-refmap.json Lunify.accesswidener Lunify.mixins.json --backup obf_backups
