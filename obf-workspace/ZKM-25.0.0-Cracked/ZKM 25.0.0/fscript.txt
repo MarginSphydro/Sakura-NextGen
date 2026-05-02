@@ -41,11 +41,13 @@ fixedClasses
 methodParameterChangesExclude
     @org.spongepowered.asm.mixin.Mixin *.* *(*) and
     *.* @*.EventHandler *(*) and
+    *.* @net.neoforged.fml.common.Mod$EventHandler *(*) and
     **.mixins.^*^ *(*);
 
 methodParameterObfuscationExclude
     @org.spongepowered.asm.mixin.Mixin *.* *(*) and
     *.* @*.EventHandler *(*) and
+    *.* @net.neoforged.fml.common.Mod$EventHandler *(*) and
     **.mixins.^*^ *(*);
 
 obfuscate   changeLogFileIn=""
