@@ -3,7 +3,7 @@ classpath   "..\..\zkmLibs\*.jar";
 ignoreMissingReferences dev.sakura.**;
 
 open        openNestedArchives=false
-            "..\..\..\fabric\build\libs\sakura-neoforge-26.1.2-2.1.3.jar";
+            "..\..\..\neoforge\build\libs\sakura-neoforge-26.1.2-2.1.3.jar";
 
 exclude     @org.spongepowered.asm.mixin.Mixin *.^* and
             @org.spongepowered.asm.mixin.Mixin *.^*^ * and
