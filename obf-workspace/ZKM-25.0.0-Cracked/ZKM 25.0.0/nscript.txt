@@ -24,9 +24,9 @@ obfuscateFlowExclude
             dev.sakura.neoforge.^*^;
 
 obfuscateReferencesExclude
-            @net.minecraftforge.fml.common.Mod *.* *(*);
-
-
+            @net.minecraftforge.fml.common.Mod *.* *(*) and
+            dev.sakura.client.^* and
+            dev.sakura.neoforge.^*;
 stringEncryptionExclude
             *.mixin*.* and
             *.mixins*.*;
