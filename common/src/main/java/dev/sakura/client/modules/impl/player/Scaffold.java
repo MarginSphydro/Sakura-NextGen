@@ -57,8 +57,7 @@ public class Scaffold extends Module {
                     renderBoxes.removeIf(box -> time - box.startTime() > fadeTime);
 
                     for (RenderBox box : renderBoxes) {
-                        long age = time - box.startTime();
-                        float progress = Mth.clamp((float) age / fadeTime, 0.0f, 1.0f);
+                        float progress = Mth.clamp((float) (time - box.startTime()) / fadeTime, 0.0f, 1.0f);
 
                         double scale = 1.0;
                         if (box.shrink()) {
