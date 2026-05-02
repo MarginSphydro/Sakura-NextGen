@@ -10,6 +10,7 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    timeout-minutes: 60
 
     steps:
     - name: Checkout repository
@@ -24,12 +25,34 @@ jobs:
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
+      with:
+        gradle-home-cache-includes: |
+          caches
+          notifications
+          jdks
+
+    - name: Build common with Gradle
+      run: .\gradlew :common:build --info
+      timeout-minutes: 30
+      continue-on-error: true
+
+    - name: Build common retry
+      if: failure()
+      run: .\gradlew :common:build --info --refresh-dependencies
+      timeout-minutes: 30
+
+    - name: Build fabric with Gradle
+      run: .\gradlew :fabric:build --info
+      timeout-minutes: 30
+      continue-on-error: true
+
+    - name: Build fabric retry
+      if: failure()
+      run: .\gradlew :fabric:build --info --refresh-dependencies
+      timeout-minutes: 30
 
     - name: Copy Paths
       run: .\gradlew :fabric:copyZkmLibs
-
-    - name: Build with Gradle
-      run: .\gradlew :fabric:build
 
     - name: Names
       run: |
