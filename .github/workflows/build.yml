@@ -26,10 +26,13 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
       with:
+        cache-read-only: false
         gradle-home-cache-includes: |
           caches
           notifications
           jdks
+          wrapper
+        gradle-home-cache-cleanup: true
 
     - name: Build common with Gradle
       run: .\gradlew :common:build --info
@@ -68,7 +71,7 @@ jobs:
     - name: Run MixinRename
       run: |
         cd "obf-workspace\MixinRename"
-        python MixinRename.py --jar "..\ZKM-25.0.0-Cracked\ZKM 25.0.0\sakura-26.1.2-2.1.3-rawobf.jar" --pkg dev.sakura.client.mixins dev.sakura.fabric.mixins --out sakura-26.1.2-2.1.3-obf.jar --configs fabric.mod.json sakura-refmap.json sakura.accesswidener sakura.mixins.json --backup obf_backups
+        python MixinRename.py --jar "..\ZKM-25.0.0-Cracked\ZKM 25.0.0\sakura-26.1.2-2.1.3-rawobf.jar" --pkg dev.sakura.client.mixins dev.sakura.fabric.mixins --out sakura-26.1.2-2.1.3-obf.jar --configs fabric.mod.json sakura-refmap.json sakura.accesswidener sakura.mixins.json sakura.fabric.mixins.json --backup obf_backups
       shell: cmd
 
     - name: Upload Artifact
