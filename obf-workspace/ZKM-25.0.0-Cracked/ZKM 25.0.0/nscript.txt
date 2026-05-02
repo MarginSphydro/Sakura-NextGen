@@ -50,7 +50,7 @@ methodParameterObfuscationExclude
 
 obfuscate   changeLogFileIn=""
             changeLogFileOut="ChangeLog.txt"
-            methodParameterChanges=none
+            methodParameterChanges=flowObfuscate
             obfuscateFlow=aggressive
             exceptionObfuscation=heavy
             encryptStringLiterals=aggressive
@@ -67,7 +67,7 @@ obfuscate   changeLogFileIn=""
             lineNumbers=keep
             obfuscateReferences=none
             autoReflectionHandling=normal
-            obfuscateParameters=none
+            obfuscateParameters=normal
             collapsePackagesWithDefault="PROTECTED_BY_MARK_7601"
             newNamesPrefix=""
             preverify=true
