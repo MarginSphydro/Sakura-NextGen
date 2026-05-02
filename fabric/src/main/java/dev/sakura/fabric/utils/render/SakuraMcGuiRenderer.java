@@ -1,4 +1,4 @@
-package dev.sakura.client.utils.render;
+package dev.sakura.fabric.utils.render;
 
 import net.minecraft.client.gui.render.GuiRenderer;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;

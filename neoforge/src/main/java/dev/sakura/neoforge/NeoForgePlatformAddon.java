@@ -1,8 +1,9 @@
-package dev.sakura.client;
+package dev.sakura.neoforge;
 
+import dev.sakura.client.SakuraClient;
 import dev.sakura.client.addon.SakuraAddon;
-import dev.sakura.client.modules.NeoModuleTest;
 import dev.sakura.client.settings.impl.BoolSetting;
+import dev.sakura.neoforge.modules.NeoModuleTest;
 
 import java.util.List;
 

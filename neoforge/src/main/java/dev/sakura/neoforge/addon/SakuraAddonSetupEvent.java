@@ -1,5 +1,6 @@
-package dev.sakura.client.addon;
+package dev.sakura.neoforge.addon;
 
+import dev.sakura.client.addon.SakuraAddon;
 import net.neoforged.bus.api.Event;
 
 import java.util.ArrayList;

@@ -1,25 +1,21 @@
-package dev.sakura.client;
+package dev.sakura.neoforge;
 
+import dev.sakura.client.SakuraClient;
 import dev.sakura.client.addon.AddonBootstrap;
-import dev.sakura.client.addon.SakuraAddonSetupEvent;
 import dev.sakura.client.assets.i18n.LanguageReloadListener;
 import dev.sakura.client.assets.resources.ResourceLocationUtils;
+import dev.sakura.neoforge.addon.SakuraAddonSetupEvent;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
-@Mod(value = SakuraClient.MOD_ID, dist = Dist.CLIENT)
 @EventBusSubscriber(modid = SakuraClient.MOD_ID, value = Dist.CLIENT)
 public class SakuraNeoForge {
 
-    @SubscribeEvent
-    private static void onClientSetup(FMLClientSetupEvent event) {
-        SakuraAddonSetupEvent addonEvent = new SakuraAddonSetupEvent();
-        NeoForge.EVENT_BUS.post(addonEvent);
+    public static void init() {
+        SakuraAddonSetupEvent addonEvent = NeoForge.EVENT_BUS.post(new SakuraAddonSetupEvent());
         AddonBootstrap.registerAddons(addonEvent.getAddons());
 
         SakuraClient.init();

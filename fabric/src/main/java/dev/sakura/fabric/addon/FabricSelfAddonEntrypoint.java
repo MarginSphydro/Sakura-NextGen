@@ -1,6 +1,7 @@
-package dev.sakura.client.addon;
+package dev.sakura.fabric.addon;
 
-import dev.sakura.client.FabricPlatformAddon;
+import dev.sakura.client.addon.SakuraAddonSetupEvent;
+import dev.sakura.fabric.FabricPlatformAddon;
 
 /**
  * Registers Epsilon's built-in Fabric addon through Fabric custom entrypoint.

@@ -1,5 +1,6 @@
-package dev.sakura.client;
+package dev.sakura.fabric;
 
+import dev.sakura.client.SakuraClient;
 import dev.sakura.client.assets.i18n.LanguageReloadListener;
 import dev.sakura.client.assets.resources.ResourceLocationUtils;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;

@@ -1,6 +1,6 @@
-package dev.sakura.client.addon;
+package dev.sakura.neoforge.addon;
 
-import dev.sakura.client.NeoForgePlatformAddon;
+import dev.sakura.neoforge.NeoForgePlatformAddon;
 import net.neoforged.neoforge.common.NeoForge;
 
 /**

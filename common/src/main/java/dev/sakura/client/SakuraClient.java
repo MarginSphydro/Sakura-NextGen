@@ -23,7 +23,7 @@ public class SakuraClient {
 
         LOGGER.info("Welcome to Sakura, Meow~");
 
-        EventBus.INSTANCE.registerLambdaFactory(SakuraClient.class.getPackageName(), (lookupInMethod, klass) -> (MethodHandles.Lookup) lookupInMethod.invoke(null, klass, MethodHandles.lookup()));
+        EventBus.INSTANCE.registerLambdaFactory("dev.sakura", (lookupInMethod, klass) -> (MethodHandles.Lookup) lookupInMethod.invoke(null, klass, MethodHandles.lookup()));
 
         // 初始化 Managers
         ModuleManager.INSTANCE.initModules();

@@ -1,5 +1,6 @@
-package dev.sakura.client;
+package dev.sakura.fabric;
 
+import dev.sakura.client.SakuraClient;
 import dev.sakura.client.addon.SakuraAddon;
 
 import java.util.List;

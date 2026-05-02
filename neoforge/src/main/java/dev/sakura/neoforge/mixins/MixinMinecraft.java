@@ -1,6 +1,6 @@
-package dev.sakura.client.mixins;
+package dev.sakura.neoforge.mixins;
 
-import dev.sakura.client.SakuraFabric;
+import dev.sakura.neoforge.SakuraNeoForge;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.main.GameConfig;
 import org.spongepowered.asm.mixin.Mixin;
@@ -9,11 +9,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Minecraft.class)
-public class MixinMinecraftFabric {
+public class MixinMinecraft {
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void onInit(GameConfig gameConfig, CallbackInfo ci) {
-        SakuraFabric.init();
+        SakuraNeoForge.init();
     }
 
 }
