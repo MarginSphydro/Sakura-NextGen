@@ -64,11 +64,11 @@ public class ModuleManager {
                 PacketMine.INSTANCE,
                 SafeAnchor.INSTANCE,
                 SafeCrystal.INSTANCE,
+                SilentAim.INSTANCE,
                 SpearKill.INSTANCE,
                 Surround.INSTANCE,
                 TriggerBot.INSTANCE,
                 Velocity.INSTANCE,
-                AspectRatio.INSTANCE,
 
                 // Player
                 AutoFirework.INSTANCE,
@@ -99,6 +99,7 @@ public class ModuleManager {
                 Blink.INSTANCE,
 
                 // Render
+                AspectRatio.INSTANCE,
                 CameraClip.INSTANCE,
                 ESP.INSTANCE,
                 Fullbright.INSTANCE,
@@ -204,12 +205,12 @@ public class ModuleManager {
                     module.setEnabled(false);
                 }
             }
-            if (ClientSetting.INSTANCE.shouldChatNotify()) {
+            if (ClientSetting.INSTANCE.chatNotify.getValue()) {
                 ChatUtils.addChatMessage(module.getTranslatedName() + " is now " + (module.isEnabled() ? "enabled" : "disabled"));
             }
         }
 
-        if (!affectedModules.isEmpty() && ClientSetting.INSTANCE.shouldSoundNotify()) {
+        if (!affectedModules.isEmpty() && ClientSetting.INSTANCE.soundNotify.getValue()) {
             if (hasEnabling) {
                 SoundManager.INSTANCE.playInUi(SoundKey.ENABLE);
             } else {

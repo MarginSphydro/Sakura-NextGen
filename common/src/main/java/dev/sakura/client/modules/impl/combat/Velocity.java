@@ -73,7 +73,7 @@ public class Velocity extends Module {
     private final Queue<Packet<? super ClientPacketListener>> packets = new ConcurrentLinkedQueue<>();
 
     @Override
-    public void onEnable() {
+    protected void onEnable() {
         jump = false;
         lag = false;
         targets.clear();
@@ -82,7 +82,7 @@ public class Velocity extends Module {
     }
 
     @Override
-    public void onDisable() {
+    protected void onDisable() {
         jump = false;
         lag = false;
         targets.clear();
@@ -92,7 +92,9 @@ public class Velocity extends Module {
     }
 
     @EventHandler
-    public void onPacket(PacketEvent.Receive event) {
+    private void onPacketReceive(PacketEvent.Receive event) {
+        if (nullCheck()) return;
+
         switch (mode.getValue()) {
             case Cancel -> {
                 if (nullCheck()) return;
@@ -193,7 +195,7 @@ public class Velocity extends Module {
     }
 
     @EventHandler
-    public void onPreTick(TickEvent.Pre event) {
+    private void onPreTick(TickEvent.Pre event) {
         if (nullCheck()) return;
 
         switch (mode.getValue()) {
@@ -222,7 +224,7 @@ public class Velocity extends Module {
         }
     }
 
-    public void clear(boolean handle) {
+    private void clear(boolean handle) {
         lag = false;
         stage = VelocityStage.NONE;
         targets.clear();
@@ -238,7 +240,7 @@ public class Velocity extends Module {
     }
 
     @EventHandler
-    public void onKeyboardInput(KeyboardInputEvent event) {
+    private void onKeyboardInput(KeyboardInputEvent event) {
         if (mode.is(Mode.NoXZ)) {
             if (stage == VelocityStage.DELAY && velocity != null && mc.hitResult instanceof EntityHitResult entityHitResult && entityHitResult.getEntity() instanceof Player player && !AntiBot.INSTANCE.isBot(player)) {
                 stage = VelocityStage.ATTACK;

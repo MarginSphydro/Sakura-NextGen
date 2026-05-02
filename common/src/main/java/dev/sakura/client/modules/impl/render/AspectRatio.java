@@ -9,9 +9,9 @@ public class AspectRatio extends Module {
     public static final AspectRatio INSTANCE = new AspectRatio();
 
     private AspectRatio() {
-        super("AspectRatio", Category.RENDER);
+        super("Aspect Ratio", Category.RENDER);
     }
 
-    public final DoubleSetting ratio = doubleSetting("Ratio", 1.78, 0.01, 5.0, 0.01);
+    public final DoubleSetting ratio = doubleSetting("Ratio", 1.78, 0.1, 8.0, 0.1);
 
 }

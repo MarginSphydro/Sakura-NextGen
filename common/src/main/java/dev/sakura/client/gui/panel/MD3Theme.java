@@ -72,8 +72,8 @@ public class MD3Theme {
     }
 
     public static void syncFromSettings() {
-        ClientSetting.ThemePreset preset = ClientSetting.INSTANCE.getThemePreset();
-        ClientSetting.ThemeMode mode = ClientSetting.INSTANCE.getThemeMode();
+        ClientSetting.ThemePreset preset = ClientSetting.INSTANCE.themePreset.getValue();
+        ClientSetting.ThemeMode mode = ClientSetting.INSTANCE.themeMode.getValue();
         if (preset == appliedPreset && mode == appliedMode) {
             return;
         }
@@ -125,7 +125,7 @@ public class MD3Theme {
     }
 
     public static boolean isLightTheme() {
-        return ClientSetting.INSTANCE.getThemeMode() == ClientSetting.ThemeMode.Light;
+        return ClientSetting.INSTANCE.themeMode.is(ClientSetting.ThemeMode.Light);
     }
 
     public static Color stateLayer(Color color, float progress, int maxAlpha) {

@@ -6,8 +6,10 @@ import dev.sakura.client.events.bus.EventBus;
 import dev.sakura.client.events.impl.PlayerTickEvent;
 import dev.sakura.client.events.impl.SendPositionEvent;
 import dev.sakura.client.events.impl.SlowdownEvent;
+import dev.sakura.client.events.impl.SwingHandEvent;
 import dev.sakura.client.modules.impl.combat.Velocity;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -31,6 +33,14 @@ public class MixinLocalPlayer {
         LocalPlayer player = (LocalPlayer) (Object) this;
         sakura$motionEvent = EventBus.INSTANCE.post(new SendPositionEvent(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot(), player.onGround()));
         if (sakura$motionEvent.isCancelled()) {
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "swing", at = @At("HEAD"), cancellable = true)
+    private void onSwing(InteractionHand hand, CallbackInfo ci) {
+        SwingHandEvent event = EventBus.INSTANCE.post(new SwingHandEvent());
+        if (event.isCancelled()) {
             ci.cancel();
         }
     }

@@ -33,7 +33,7 @@ public class ChatUtils {
     }
 
     public static FormattedCharSequence applyAnimatedPrefix(FormattedCharSequence original) {
-        if (!ClientSetting.INSTANCE.shouldAnimateChatPrefix()) {
+        if (!ClientSetting.INSTANCE.animatedChatPrefix.getValue()) {
             return original;
         }
 
@@ -43,14 +43,14 @@ public class ChatUtils {
         }
 
         MutableComponent gradientLine = Component.empty();
-        double animationTime = System.currentTimeMillis() / 180.0 * ClientSetting.INSTANCE.getChatPrefixGradientSpeed();
+        double animationTime = System.currentTimeMillis() / 180.0 * ClientSetting.INSTANCE.chatPrefixGradientSpeed.getValue();
 
         int visualIndex = 0;
         for (int offset = 0; offset < PREFIX.length(); ) {
             int codePoint = PREFIX.codePointAt(offset);
             String character = new String(Character.toChars(codePoint));
             float blend = (float) ((Math.sin(animationTime - visualIndex * GRADIENT_CHAR_STEP) + 1.0D) * 0.5D);
-            int color = ColorUtils.interpolateColor(ClientSetting.INSTANCE.getChatPrefixColorStart(), ClientSetting.INSTANCE.getChatPrefixColorEnd(), blend).getRGB() & 0xFFFFFF;
+            int color = ColorUtils.interpolateColor(ClientSetting.INSTANCE.chatPrefixColorStart.getValue(), ClientSetting.INSTANCE.chatPrefixColorEnd.getValue(), blend).getRGB() & 0xFFFFFF;
 
             gradientLine.append(Component.literal(character).withStyle(Style.EMPTY.withColor(color)));
             offset += Character.charCount(codePoint);

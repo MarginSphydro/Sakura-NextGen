@@ -1,14 +1,19 @@
 {
-    "schemaVersion": 1,
-  "id": "immediatelyfast",
-  "version": "1.15.2+26.1.2",
-  "name": "ImmediatelyFast",
-  "description": "Speed up and optimize immediate mode rendering in Minecraft",
+  "schemaVersion": 1,
+  "id": "offlinemodefix",
+  "version": "1.0.0",
+  "name": "Offline Mode Fix",
+  "description": "Fixes chat lag spikes, removes 'Not Secure' indicators, and suppresses unverified server warnings on offline-mode servers.",
   "authors": [
-    "RK_01"
+    "Louiszn"
   ],
-  "license": "LGPL-3.0",
-  "icon": "assets/immediatelyfast/icon.png",
+  "contact": {
+    "homepage": "https://github.com/louiszn/offline-mode-fix#readme",
+    "sources": "https://github.com/louiszn/offline-mode-fix",
+    "issues": "https://github.com/louiszn/offline-mode-fix/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/sakura/textures/icons/icon.png",
   "environment": "*",
     "mixins": [
         "${mod_id}.mixins.json",

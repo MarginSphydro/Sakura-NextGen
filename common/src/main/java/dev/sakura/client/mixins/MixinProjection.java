@@ -24,15 +24,10 @@ public class MixinProjection {
 
     @Inject(method = "getMatrix", at = @At("RETURN"))
     private void sakura$aspectRatio$getMatrix(Matrix4f dest, CallbackInfoReturnable<Matrix4f> cir) {
-        if (projectionType != ProjectionType.PERSPECTIVE) return;
-        if (!AspectRatio.INSTANCE.isEnabled()) return;
-
-        double targetAspect = AspectRatio.INSTANCE.ratio.getValue();
-        if (targetAspect <= 0.0) return;
-        if (height == 0.0f) return;
+        if (!AspectRatio.INSTANCE.isEnabled() || projectionType != ProjectionType.PERSPECTIVE) return;
 
         float currentAspect = width / height;
-        float scale = (float) (currentAspect / targetAspect);
+        float scale = currentAspect / AspectRatio.INSTANCE.ratio.getValue().floatValue();
 
         Matrix4f m = cir.getReturnValue();
         m.m00(m.m00() * scale);

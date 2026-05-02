@@ -84,10 +84,6 @@ public class TargetManager {
         return sharedTarget;
     }
 
-    public void clearSharedTarget() {
-        sharedTarget = null;
-    }
-
     private List<LivingEntity> collectTargets(TargetRequest request) {
         List<LivingEntity> targets = new ArrayList<>();
 
@@ -187,7 +183,5 @@ public class TargetManager {
             return new TargetRequest(range, fov, player, mob, animal, villager, invisible, extraFilter, maxTargets);
         }
     }
+
 }
-
-
-

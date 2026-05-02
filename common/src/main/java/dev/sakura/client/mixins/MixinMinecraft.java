@@ -2,10 +2,12 @@ package dev.sakura.client.mixins;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import dev.sakura.client.SakuraClient;
 import dev.sakura.client.events.bus.EventBus;
 import dev.sakura.client.events.impl.ClickEvent;
 import dev.sakura.client.events.impl.TickEvent;
 import dev.sakura.client.events.impl.WorldEvent;
+import dev.sakura.client.modules.impl.ClientSetting;
 import dev.sakura.client.modules.impl.player.MultiTask;
 import dev.sakura.client.modules.impl.player.UseCooldown;
 import dev.sakura.client.modules.impl.render.HandsView;
@@ -20,6 +22,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Minecraft.class)
@@ -36,6 +39,11 @@ public class MixinMinecraft {
     @Inject(method = "tick", at = @At("TAIL"))
     private void onPostTick(CallbackInfo info) {
         EventBus.INSTANCE.post(new TickEvent.Post());
+    }
+
+    @ModifyArg(method = "updateTitle", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/Window;setTitle(Ljava/lang/String;)V"))
+    private String onUpdateTitle(String title) {
+        return ClientSetting.INSTANCE.customTitle.getValue() ? "桜 " + SakuraClient.VERSION + " for " + title : title;
     }
 
     @Inject(method = "handleKeybinds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isUsingItem()Z", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
