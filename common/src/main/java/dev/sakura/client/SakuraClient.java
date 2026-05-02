@@ -12,7 +12,7 @@ import java.lang.invoke.MethodHandles;
 
 public class SakuraClient {
 
-    public static final String MOD_ID = BuildConfig.MODID;
+    public static final String MOD_ID = BuildConfig.MOD_ID;
     public static final String VERSION = BuildConfig.VERSION;
 
     public static final Logger LOGGER = LogManager.getLogger("Sakura");

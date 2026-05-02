@@ -67,7 +67,6 @@ public abstract class HudModule extends Module {
         verticalAnchor = VerticalAnchor.Top;
         applyRenderPosition(renderX, renderY, false);
 
-        // 传统位置是原始的左上角渲染坐标
         this.anchorX = this.x;
         this.anchorY = this.y;
     }
@@ -121,8 +120,7 @@ public abstract class HudModule extends Module {
     }
 
     private float getAnchoredRenderY() {
-        int screenHeight = getScreenHeight();
-        return HudLayoutHelper.getRenderY(verticalAnchor, anchorY, height, screenHeight);
+        return HudLayoutHelper.getRenderY(verticalAnchor, anchorY, height, getScreenHeight());
     }
 
     private static int getScreenWidth() {
