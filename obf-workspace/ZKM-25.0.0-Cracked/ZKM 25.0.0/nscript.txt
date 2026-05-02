@@ -8,6 +8,9 @@ open        openNestedArchives=false
 exclude     @org.spongepowered.asm.mixin.Mixin *.^* and
             @org.spongepowered.asm.mixin.Mixin *.^*^ * and
             @org.spongepowered.asm.mixin.Mixin *.^*^ *(*) and
+            dev.sakura.neoforge.^* and
+            dev.sakura.neoforge.^*^ * and
+            dev.sakura.neoforge.^*^ *(*) and
             com.zelix.klassmaster.^* and
             com.zelix.klassmaster.^*^ * and
             com.zelix.klassmaster.^*^ *(*) and
@@ -17,7 +20,8 @@ exclude     @org.spongepowered.asm.mixin.Mixin *.^* and
 
 obfuscateFlowExclude
             @org.spongepowered.asm.mixin.Mixin *.* and
-            **.mixins.^*^;
+            **.mixins.^*^ and
+            dev.sakura.neoforge.^*^;
 
 obfuscateReferencesExclude
             @net.minecraftforge.fml.common.Mod *.* *(*);
@@ -42,14 +46,14 @@ methodParameterChangesExclude
     @org.spongepowered.asm.mixin.Mixin *.* *(*) and
     *.* @*.EventHandler *(*) and
     *.* @net.neoforged.fml.common.Mod$EventHandler *(*) and
-    *.* @net.neoforged.api.distmarker.OnlyIn *(*) and
+    dev.sakura.neoforge.^* and
     **.mixins.^*^ *(*);
 
 methodParameterObfuscationExclude
     @org.spongepowered.asm.mixin.Mixin *.* *(*) and
     *.* @*.EventHandler *(*) and
     *.* @net.neoforged.fml.common.Mod$EventHandler *(*) and
-    *.* @net.neoforged.api.distmarker.OnlyIn *(*) and
+    dev.sakura.neoforge.^* and
     **.mixins.^*^ *(*);
 
 obfuscate   changeLogFileIn=""
