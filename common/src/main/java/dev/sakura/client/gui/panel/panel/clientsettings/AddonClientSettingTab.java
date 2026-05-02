@@ -1,6 +1,5 @@
 package dev.sakura.client.gui.panel.panel.clientsettings;
 
-
 import dev.sakura.client.addon.SakuraAddon;
 import dev.sakura.client.assets.holders.TranslateHolder;
 import dev.sakura.client.assets.i18n.SakuraTranslateComponent;
@@ -35,7 +34,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public final class AddonClientSettingTab implements ClientSettingTabView {
+public class AddonClientSettingTab implements ClientSettingTabView {
 
     private static final TranslateComponent emptyComponent = SakuraTranslateComponent.create("gui", "addon.empty");
     private static final TranslateComponent noSettingsComponent = SakuraTranslateComponent.create("gui", "addon.no_settings");

@@ -5,7 +5,7 @@ import dev.sakura.client.managers.AddonManager;
 /**
  * Shared addon bootstrap utility used by multiple loaders.
  */
-public final class AddonBootstrap {
+public class AddonBootstrap {
 
     private AddonBootstrap() {
     }

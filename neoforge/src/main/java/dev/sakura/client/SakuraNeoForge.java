@@ -12,8 +12,8 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
-@Mod(value = SakuraClient.MODID, dist = Dist.CLIENT)
-@EventBusSubscriber(modid = SakuraClient.MODID, value = Dist.CLIENT)
+@Mod(value = SakuraClient.MOD_ID, dist = Dist.CLIENT)
+@EventBusSubscriber(modid = SakuraClient.MOD_ID, value = Dist.CLIENT)
 public class SakuraNeoForge {
 
     @SubscribeEvent

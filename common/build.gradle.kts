@@ -7,7 +7,7 @@ plugins {
 buildConfig {
     packageName("dev.sakura.client")
     useJavaOutput()
-    buildConfigField("String", "MODID", "\"${project.property("mod_id")}\"")
+    buildConfigField("String", "MOD_ID", "\"${project.property("mod_id")}\"")
     buildConfigField("String", "VERSION", "\"${project.version}\"")
 }
 
@@ -46,6 +46,7 @@ artifacts {
 }
 
 val loaderAttribute = Attribute.of("io.github.mcgradleconventions.loader", String::class.java)
+
 listOf("apiElements", "runtimeElements", "sourcesElements").forEach { variant ->
     configurations.named(variant) {
         attributes {
@@ -53,6 +54,7 @@ listOf("apiElements", "runtimeElements", "sourcesElements").forEach { variant ->
         }
     }
 }
+
 sourceSets.configureEach {
     listOf(compileClasspathConfigurationName, runtimeClasspathConfigurationName).forEach { variant ->
         configurations.named(variant) {
