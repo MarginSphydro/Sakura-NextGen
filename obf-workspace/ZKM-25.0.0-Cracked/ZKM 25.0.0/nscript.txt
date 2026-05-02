@@ -8,6 +8,15 @@ open        openNestedArchives=false
 exclude     @org.spongepowered.asm.mixin.Mixin *.^* and
             @org.spongepowered.asm.mixin.Mixin *.^*^ * and
             @org.spongepowered.asm.mixin.Mixin *.^*^ *(*) and
+            dev.sakura.client.addon.^* and
+            dev.sakura.client.addon.^*^ * and
+            dev.sakura.client.addon.^*^ *(*) and
+            dev.sakura.client.managers.^* and
+            dev.sakura.client.managers.^*^ * and
+            dev.sakura.client.managers.^*^ *(*) and
+            dev.sakura.client.events.^* and
+            dev.sakura.client.events.^*^ * and
+            dev.sakura.client.events.^*^ *(*) and
             dev.sakura.neoforge.^* and
             dev.sakura.neoforge.^*^ * and
             dev.sakura.neoforge.^*^ *(*) and
@@ -21,31 +30,35 @@ exclude     @org.spongepowered.asm.mixin.Mixin *.^* and
 obfuscateFlowExclude
             @org.spongepowered.asm.mixin.Mixin *.* and
             **.mixins.^*^ and
+            dev.sakura.client.addon.^*^ and
+            dev.sakura.client.managers.^*^ and
+            dev.sakura.client.events.^*^ and
             dev.sakura.neoforge.^*^;
 
 obfuscateReferencesExclude
             @net.minecraftforge.fml.common.Mod *.* *(*) and
             dev.sakura.client.^* and
             dev.sakura.neoforge.^*;
-stringEncryptionExclude
-            *.mixin*.* and
-            *.mixins*.*;
 
 integerEncryptionExclude
             *.mixin*.* and
-            *.mixins*.*;
+            *.mixins*.* and
+            dev.sakura.client.^*;
 
 longEncryptionExclude
             *.mixin*.* and
-            *.mixins*.*;
+            *.mixins*.* and
+            dev.sakura.client.^*;
 
 fixedClasses
-    @net.minecraftforge.fml.common.Mod *.* *(*);
+    @net.minecraftforge.fml.common.Mod *.^* and
+    dev.sakura.client.^*;
 
 methodParameterChangesExclude
     @org.spongepowered.asm.mixin.Mixin *.* *(*) and
     *.* @*.EventHandler *(*) and
     *.* @net.neoforged.fml.common.Mod$EventHandler *(*) and
+    dev.sakura.client.^* and
     dev.sakura.neoforge.^* and
     **.mixins.^*^ *(*);
 
@@ -53,8 +66,18 @@ methodParameterObfuscationExclude
     @org.spongepowered.asm.mixin.Mixin *.* *(*) and
     *.* @*.EventHandler *(*) and
     *.* @net.neoforged.fml.common.Mod$EventHandler *(*) and
+    dev.sakura.client.events.bus.^* *(*) and
+    dev.sakura.client.managers.^* *(*) and
+    dev.sakura.client.^* and
     dev.sakura.neoforge.^* and
     **.mixins.^*^ *(*);
+
+stringEncryptionExclude
+    *.mixin*.* and
+    *.mixins*.* and
+    dev.sakura.client.events.^* and
+    dev.sakura.client.managers.^* and
+    dev.sakura.client.^*;
 
 obfuscate   changeLogFileIn=""
             changeLogFileOut="ChangeLog.txt"
