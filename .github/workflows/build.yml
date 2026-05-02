@@ -105,4 +105,3 @@ jobs:
         name: sakura-zkm-post
         path: |
           obf-workspace\MixinRename\*.jar
-          fabric\build\libs
