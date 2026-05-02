@@ -1,0 +1,78 @@
+classpath   "..\..\zkmLibs\*.jar";
+
+ignoreMissingReferences dev.sakura.**;
+
+open        openNestedArchives=false
+            "..\..\..\fabric\build\libs\sakura-neoforge-26.1.2-2.1.3.jar";
+
+exclude     @org.spongepowered.asm.mixin.Mixin *.^* and
+            @org.spongepowered.asm.mixin.Mixin *.^*^ * and
+            @org.spongepowered.asm.mixin.Mixin *.^*^ *(*) and
+            com.zelix.klassmaster.^* and
+            com.zelix.klassmaster.^*^ * and
+            com.zelix.klassmaster.^*^ *(*) and
+            jnic.^* and
+            jnic.^*^ * and
+            jnic.^*^ *(*);
+
+obfuscateFlowExclude
+            @org.spongepowered.asm.mixin.Mixin *.* and
+            **.mixins.^*^;
+
+obfuscateReferencesExclude
+            @net.minecraftforge.fml.common.Mod *.* *(*);
+
+
+stringEncryptionExclude
+            *.mixin*.* and
+            *.mixins*.*;
+
+integerEncryptionExclude
+            *.mixin*.* and
+            *.mixins*.*;
+
+longEncryptionExclude
+            *.mixin*.* and
+            *.mixins*.*;
+
+fixedClasses
+    @net.minecraftforge.fml.common.Mod *.* *(*);
+
+methodParameterChangesExclude
+    @org.spongepowered.asm.mixin.Mixin *.* *(*) and
+    *.* @*.EventHandler *(*) and
+    **.mixins.^*^ *(*);
+
+methodParameterObfuscationExclude
+    @org.spongepowered.asm.mixin.Mixin *.* *(*) and
+    *.* @*.EventHandler *(*) and
+    **.mixins.^*^ *(*);
+
+obfuscate   changeLogFileIn=""
+            changeLogFileOut="ChangeLog.txt"
+            methodParameterChanges=none
+            obfuscateFlow=aggressive
+            exceptionObfuscation=heavy
+            encryptStringLiterals=aggressive
+            encryptIntegerConstants=aggressive
+            encryptLongConstants=normal
+            newClassNameFile="names.txt"
+            newMethodNameFile="names.txt"
+            newFieldNameFile="names.txt"
+            newPackageNameFile="names.txt"
+            mixedCaseClassNames=true
+            aggressiveMethodRenaming=true
+            randomize=true
+            localVariables=keep
+            lineNumbers=keep
+            obfuscateReferences=none
+            autoReflectionHandling=normal
+            obfuscateParameters=none
+            collapsePackagesWithDefault="PROTECTED_BY_MARK_7601"
+            newNamesPrefix=""
+            preverify=true
+            legalIdentifiers=true
+            hideStaticMethodNames=true
+            hideFieldNames=true;
+
+saveAll     archiveCompression=all "sakura-26.1.2-2.1.3-nrawobf.jar";

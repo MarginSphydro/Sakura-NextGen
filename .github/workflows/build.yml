@@ -54,24 +54,49 @@ jobs:
       run: .\gradlew :fabric:build --info --refresh-dependencies
       timeout-minutes: 30
 
-    - name: Copy Paths
+    - name: Build neoforge with Gradle
+      run: .\gradlew :neoforge:build --info
+      timeout-minutes: 30
+      continue-on-error: true
+
+    - name: Build neoforge retry
+      if: failure()
+      run: .\gradlew :neoforge:build --info --refresh-dependencies
+      timeout-minutes: 30
+
+    - name: Copy Paths For Fabric
       run: .\gradlew :fabric:copyZkmLibs
+
+    - name: Copy Paths For Neoforge
+      run: .\gradlew :Neoforge:copyZkmLibs
 
     - name: Names
       run: |
         python f2.py
       shell: cmd
 
-    - name: Run ZKM Obfuscation
+    - name: Run ZKM Obfuscation For Fabric
       run: |
         cd "obf-workspace\ZKM-25.0.0-Cracked\ZKM 25.0.0"
         .\Script.bat
       shell: cmd
 
-    - name: Run MixinRename
+    - name: Run ZKM Obfuscation For Neoforge
+      run: |
+        cd "obf-workspace\ZKM-25.0.0-Cracked\ZKM 25.0.0"
+        .\nScript.bat
+      shell: cmd
+
+    - name: Run MixinRename For Fabric
       run: |
         cd "obf-workspace\MixinRename"
-        python MixinRename.py --jar "..\ZKM-25.0.0-Cracked\ZKM 25.0.0\sakura-26.1.2-2.1.3-rawobf.jar" --pkg dev.sakura.client.mixins dev.sakura.fabric.mixins --out sakura-26.1.2-2.1.3-obf.jar --configs fabric.mod.json sakura-refmap.json sakura.accesswidener sakura.mixins.json sakura.fabric.mixins.json --backup obf_backups
+        python MixinRename.py --jar "..\ZKM-25.0.0-Cracked\ZKM 25.0.0\sakura-26.1.2-2.1.3-rawobf.jar" --pkg dev.sakura.client.mixins dev.sakura.fabric.mixins --out sakura-fabric-26.1.2-2.1.3-obf.jar --configs fabric.mod.json sakura-refmap.json sakura.accesswidener sakura.mixins.json sakura.fabric.mixins.json --backup obf_backups
+      shell: cmd
+
+    - name: Run MixinRename For Neoforge
+      run: |
+        cd "obf-workspace\MixinRename"
+        python MixinRename.py --jar "..\ZKM-25.0.0-Cracked\ZKM 25.0.0\sakura-26.1.2-2.1.3-nrawobf.jar" --pkg dev.sakura.client.mixins dev.sakura.neoforge.mixins --out sakura-neoforge-26.1.2-2.1.3-obf.jar --configs fabric.mod.json sakura-refmap.json sakura.accesswidener sakura.mixins.json sakura.neoforge.mixins.json --backup obf_backups
       shell: cmd
 
     - name: Upload Artifact
@@ -79,5 +104,5 @@ jobs:
       with:
         name: sakura-zkm-post
         path: |
-          obf-workspace\MixinRename\sakura-26.1.2-2.1.3-obf.jar
+          obf-workspace\MixinRename\*.jar
           fabric\build\libs

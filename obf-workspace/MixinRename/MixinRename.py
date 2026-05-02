@@ -473,9 +473,6 @@ def run_on_jar(jar_path: Path, pkg_list, out_path: Path, config_names, backup_di
                     except Exception:
                         pass
 
-        # write mapping.json inside temp tree
-        (td / 'mapping.json').write_text(json.dumps(mapping, indent=2, ensure_ascii=False), encoding='utf-8')
-
         # repackage
         with zipfile.ZipFile(out_path, 'w', zipfile.ZIP_DEFLATED) as zout:
             for fp in sorted(td.rglob('*')):
@@ -506,8 +503,6 @@ def main():
         print("=== DRY RUN mapping preview ===")
         print(json.dumps(mapping, indent=2, ensure_ascii=False))
     else:
-        # write mapping alongside output jar
-        (out_path.parent / (out_path.stem + '.mapping.json')).write_text(json.dumps(mapping, indent=2, ensure_ascii=False), encoding='utf-8')
         print("Done. output:", out_path)
 
 if __name__ == '__main__':
