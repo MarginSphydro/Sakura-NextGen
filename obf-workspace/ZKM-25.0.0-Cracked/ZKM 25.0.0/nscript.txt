@@ -1,4 +1,4 @@
-classpath   "..\..\zkmLibs\*.jar";
+classpath   "..\..\zkmLibsNeo\*.jar";
 
 ignoreMissingReferences dev.sakura.**;
 
