@@ -26,6 +26,13 @@ public class SilentAim extends Module {
     }
 
     private final BoolSetting weaponOnly = boolSetting("Weapon Only", false);
+
+    private final BoolSetting player = boolSetting("Player", true);
+    private final BoolSetting mob = boolSetting("Mob", true);
+    private final BoolSetting animal = boolSetting("Animal", true);
+    private final BoolSetting villagers = boolSetting("Villagers", false);
+    private final BoolSetting invisible = boolSetting("Invisible", true);
+
     private final DoubleSetting range = doubleSetting("Range", 3.0, 1.0, 6.0, 0.1);
     private final IntSetting fov = intSetting("FOV", 360, 10, 360, 1);
 
@@ -44,7 +51,7 @@ public class SilentAim extends Module {
         }
 
         LivingEntity target = TargetManager.INSTANCE.acquirePrimary(TargetManager.TargetRequest.of(
-                range.getValue(), fov.getValue(), true, false, false, false, true, 1
+                range.getValue(), fov.getValue(), player.getValue(), mob.getValue(), animal.getValue(), villagers.getValue(), invisible.getValue(), 1
         ));
         if (target == null) return;
 

@@ -62,6 +62,7 @@ public class KillAura extends Module {
     private final BoolSetting player = boolSetting("Player", true);
     private final BoolSetting mob = boolSetting("Mob", true);
     private final BoolSetting animal = boolSetting("Animal", true);
+    private final BoolSetting villagers = boolSetting("Villagers", false);
     private final BoolSetting invisible = boolSetting("Invisible", true);
 
     private final BoolSetting swingHand = boolSetting("SwingHand", true);
@@ -112,7 +113,7 @@ public class KillAura extends Module {
                 player.getValue(),
                 mob.getValue(),
                 animal.getValue(),
-                animal.getValue(),
+                villagers.getValue(),
                 invisible.getValue(),
                 64
         ));
