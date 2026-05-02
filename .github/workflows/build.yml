@@ -96,7 +96,7 @@ jobs:
     - name: Run MixinRename For Neoforge
       run: |
         cd "obf-workspace\MixinRename"
-        python MixinRename.py --jar "..\ZKM-25.0.0-Cracked\ZKM 25.0.0\sakura-26.1.2-2.1.3-nrawobf.jar" --pkg dev.sakura.client.mixins dev.sakura.neoforge.mixins --out sakura-neoforge-26.1.2-2.1.3-obf.jar --configs fabric.mod.json sakura-refmap.json sakura.accesswidener sakura.mixins.json sakura.neoforge.mixins.json --backup obf_backups
+        python MixinRename.py --jar "..\ZKM-25.0.0-Cracked\ZKM 25.0.0\sakura-26.1.2-2.1.3-nrawobf.jar" --pkg dev.sakura.client.mixins --out sakura-neoforge-26.1.2-2.1.3-obf.jar --configs fabric.mod.json sakura-refmap.json sakura.accesswidener sakura.mixins.json sakura.neoforge.mixins.json --backup obf_backups
       shell: cmd
 
     - name: Upload Artifact
